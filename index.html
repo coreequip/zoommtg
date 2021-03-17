@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ZOOM-Link Converter</title>
+    <style>
+        html, body {
+            font-size: 16px;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        body {
+            align-items: center;
+            background-color: #222;
+            color: #eee;
+            display: flex;
+            flex-direction: column;
+            font-family: Ubuntu, Verdana, -apple-system, sans-serif;
+            justify-content: center;
+        }
+
+        input {
+            background-color: #333;
+            border: 1px solid #999;
+            color: silver;
+            font-size: 2rem;
+            outline: 0;
+            padding: .5rem;
+            text-align: center;
+            width: 80vw;
+        }
+
+        input::placeholder, h1 {
+            text-align: center;
+        }
+
+        button {
+            background-color: #555;
+            border: 0;
+            color: #eee;
+            cursor: pointer;
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            text-transform: uppercase;
+            width: 30vh;
+        }
+
+        button.check:after {
+            content: '✅';
+            padding-left: 1rem;
+        }
+
+        button:first-of-type {
+            margin-right: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Give your ZOOM invitation more privacy:</h1>
+
+<input id="txt" type="url" placeholder="Paste your zoom link here">
+
+<span id="btnBlock">
+    <button id="btnOpen" accesskey="o">Open</button>
+    <button id="btnCopy" accesskey="c">Copy</button>
+</span>
+
+<script>
+    "use strict"
+
+    let mtg = null
+
+    const update = () => btnBlock.style.display = mtg == null ? 'none' : 'block'
+
+    txt.addEventListener('input', () => {
+        const match = txt.value.match(/zoom\.us\/j\/(\d+).+?pwd=(\w+)/)
+        if (!match) {
+            mtg = null
+            return update()
+        }
+        mtg = `zoommtg://zoom.us/join?action=join&confno=${match[1]}&pwd=${match[2]}`
+        update()
+    })
+
+    btnOpen.addEventListener('click', () => location = mtg)
+
+    btnCopy.addEventListener('click', () => {
+        const node = document.createElement('input')
+        node.value = mtg
+        document.body.appendChild(node)
+        node.select()
+        document.execCommand('copy')
+        document.body.removeChild(node)
+        btnCopy.classList.add('check')
+        btnCopy.focus()
+        setTimeout(() => btnCopy.classList.remove('check'), 2000)
+    })
+
+    update()
+    txt.focus()
+</script>
+
+</body>
+</html>
